@@ -1,0 +1,22 @@
+{
+    "name": "smart/module-customorderprocessing",
+    "description": "This module update the order status through REST API",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Krishnak",
+            "email": "Krishnak@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Smart\\CustomOrderProcessing\\": ""
+        }
+    }
+}
