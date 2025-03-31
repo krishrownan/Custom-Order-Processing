@@ -4,4 +4,17 @@
 	<preference for="Smart\CustomOrderProcessing\Api\OrderStatusLogRepositoryInterface" type="Smart\CustomOrderProcessing\Model\OrderStatusLogRepository"/>
 	<preference for="Smart\CustomOrderProcessing\Api\Data\OrderStatusLogInterface" type="Smart\CustomOrderProcessing\Model\OrderStatusLog"/>
 	<preference for="Smart\CustomOrderProcessing\Api\Data\OrderStatusLogSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+	<virtualType name="Smart\CustomOrderProcessing\Model\ResourceModel\OrderStatusLog\Grid\Collection" type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+		<arguments>
+			<argument name="mainTable" xsi:type="string">order_status_update_log</argument>
+			<argument name="resourceModel" xsi:type="string">Smart\CustomOrderProcessing\Model\ResourceModel\OrderStatusLog\Collection</argument>
+		</arguments>
+	</virtualType>
+	<type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+		<arguments>
+			<argument name="collections" xsi:type="array">
+				<item name="smart_orderstatuslog_listing_data_source" xsi:type="string">Smart\CustomOrderProcessing\Model\ResourceModel\OrderStatusLog\Grid\Collection</item>
+			</argument>
+		</arguments>
+	</type>
 </config>

@@ -63,6 +63,11 @@ class OrderSaveAfter implements ObserverInterface
         $newStatus = $order->getStatus();
         $oldStatus = $observer->getEvent()->getOldStatus();
 
+        if (!$order->getId() || !$newStatus || !$oldStatus) {
+            $this->logger->error("Order or status information is missing.");
+            throw new LocalizedException(__('Order or status information is missing.'));
+        }
+
         try {
             $orderStatusLog = $this->orderStatusLogFactory->create();
             $orderStatusLog->setOrderId($order->getId());

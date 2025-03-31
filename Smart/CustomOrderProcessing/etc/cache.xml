@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
+	<type name="orderstatus_cache_tag" translate="label,description" instance="Smart\CustomOrderProcessing\Model\Cache\OrderStatus">
+		<label>OrderStatus Cache</label>
+		<description>Store the order status in cache for better performance.</description>
+	</type>
+</config>

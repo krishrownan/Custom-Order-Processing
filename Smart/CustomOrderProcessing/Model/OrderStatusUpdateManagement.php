@@ -16,6 +16,9 @@ use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Psr\Log\LoggerInterface;
 use Smart\CustomOrderProcessing\Api\OrderStatusUpdateManagementInterface;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\Serialize\SerializerInterface;
+use Smart\CustomOrderProcessing\Model\Cache\OrderStatus;
 
 class OrderStatusUpdateManagement implements OrderStatusUpdateManagementInterface
 {
@@ -25,6 +28,8 @@ class OrderStatusUpdateManagement implements OrderStatusUpdateManagementInterfac
     protected EventManager $eventManager;
     protected OrderSender $orderSender;
     protected LoggerInterface $logger;
+    protected CacheInterface $cache;
+    protected SerializerInterface $serializer;
 
     /**
      * @param OrderRepositoryInterface $orderRepository
@@ -32,19 +37,25 @@ class OrderStatusUpdateManagement implements OrderStatusUpdateManagementInterfac
      * @param EventManager $eventManager
      * @param OrderSender $orderSender
      * @param LoggerInterface $logger
+     * @param CacheInterface $cache
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         EventManager $eventManager,
         OrderSender $orderSender,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CacheInterface $cache,
+        SerializerInterface $serializer
     ) {
         $this->orderRepository = $orderRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->eventManager = $eventManager;
         $this->orderSender = $orderSender;
         $this->logger = $logger;
+        $this->cache = $cache;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -59,6 +70,11 @@ class OrderStatusUpdateManagement implements OrderStatusUpdateManagementInterfac
 
         if (empty($orderIncrementId) || empty($orderStatus)) {
             throw new InputException(__('Order increment ID and status are required.'));
+        }
+        
+        $getFromCache = $this->getCache();
+        if(is_array($getFromCache) && $getFromCache['order_id'] == $orderIncrementId && $getFromCache['order_status'] == $orderStatus) {
+            return [$this->getCache()];
         }
         
          // Get Order ID using OrderRepository (without Object Manager)
@@ -79,17 +95,18 @@ class OrderStatusUpdateManagement implements OrderStatusUpdateManagementInterfac
             }
             $this->eventManager->dispatch('sales_order_save_after', ['order' => $orderSave, 'old_status' =>  $oldStatus]);
             $this->logger->info("Order status updated successfully for ID: " . $orderIncrementId);
-            $response['response'] = [
+            $response = [
                 'order_id' => $orderSave->getId(),
                 'order_status' => $orderSave->getStatus(),
                 'message' => 'Order status updated successfully for ID: ' . $orderIncrementId
             ];
+            $this->saveCache($response);
         } catch (\Exception $e) {
             $this->logger->error("Error updating order: " . $e->getMessage());
             throw new LocalizedException(__('Error updating order status: %1', $e->getMessage()));
         }
 
-        return $response;
+        return [$response];
     }
 
     /**
@@ -113,6 +130,30 @@ class OrderStatusUpdateManagement implements OrderStatusUpdateManagementInterfac
         }
 
         return null;
+    }
+
+    /**
+     * Store data in to cache
+     * @param string $cacheData
+     * @return $this
+     */
+    protected function saveCache($cacheData) 
+    {
+        $this->cache->save(
+            $this->serializer->serialize($cacheData),
+            OrderStatus::TYPE_IDENTIFIER,
+            [OrderStatus::CACHE_TAG],
+            86400
+        );
+    }
+
+    /**
+     * Get data from cache
+     * @return $this
+     */
+    protected function getCache() 
+    {
+       return $this->serializer->unserialize($this->cache->load(OrderStatus::TYPE_IDENTIFIER));
     }
 }
 

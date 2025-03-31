@@ -3,7 +3,7 @@
 	<route url="/V1/customer/orderstatusupdate" method="POST">
 		<service class="Smart\CustomOrderProcessing\Api\OrderStatusUpdateManagementInterface" method="postOrderStatusUpdate"/>
 		<resources>
-			<resource ref="Magento_Customer::manage"/>
+			<resource ref="Smart_CustomOrderProcessing::OrderStatusLog_save"/>
 		</resources>
 	</route>
 </routes>
