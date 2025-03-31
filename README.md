@@ -10,3 +10,8 @@
 
    ![with_auth](https://github.com/user-attachments/assets/307f023f-4f5a-45ab-b77b-574426efce31)
 
+6.Request and Response
+
+![order_update_status](https://github.com/user-attachments/assets/96ff179d-0ac8-4927-b8e3-45b55c92d862)
+
+
