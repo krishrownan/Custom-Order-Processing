@@ -59,7 +59,7 @@ Please follow the below steps to install modules in Magento 2 store,
 
  **WorkFlow:**
 1. Generate Access token from Magento admin under System -> Integration
-2. Open Postman and set this end point with **POST** request **https://your-magento-domain.com/rest/all/V1/customer/orderstatusupdate** please refer below attachment for reference and set the payload
+2. Open Postman and set this end point with **POST** request **https://your-magento-domain.com/rest/all/V1/customer/orderstatusupdate**
 3. Set the payload please refer below attachment for refererence and hit the request.We can able to see the response if order status updated.
    **Payload:**
    {
